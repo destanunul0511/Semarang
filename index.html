@@ -112,21 +112,21 @@
             font-weight: 300;
         }
         .btn-modern-primary {
-            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            background: linear-gradient(90deg, #10B981 0%, #059669 100%);
             border: none;
-            color: #081B4B;
+            color: white;
             font-weight: 600;
             padding: 12px 30px;
             border-radius: 30px;
-            box-shadow: var(--neon-glow);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
         }
         .btn-modern-primary:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.8);
-            color: #081B4B;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+            color: white;
         }
         .btn-modern-secondary {
             background: transparent;
@@ -336,11 +336,12 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1200">
+                    <div class="text-warning small fw-bold mb-2 text-uppercase" style="letter-spacing: 1px;"><i class="fa-solid fa-layer-group me-2"></i>Analisis Spasial Pendidikan</div>
                     <h1 class="hero-title mb-4">Analisis Keterjangkauan & Aksesibilitas Sarana Pendidikan</h1>
                     <p class="hero-subtitle mb-4">Visualisasi spasial akses pendidikan tingkat SMA dan SMK di Kota Semarang berbasis pemodelan analisis jaringan (*network analysis*), batas komputasi *service area*, serta evaluasi ketersediaan fasilitas penunjang.</p>
                     <div class="d-flex gap-3">
-                        <a href="#peta" class="btn btn-modern-primary">Lihat Peta</a>
-                        <a href="#dashboard" class="btn btn-modern-secondary">Pelajari Analisis</a>
+                        <a href="#peta" class="btn btn-modern-primary"><i class="fa-solid fa-map me-2"></i>Lihat Peta</a>
+                        <a href="#dashboard" class="btn btn-modern-secondary"><i class="fa-solid fa-chart-simple me-2"></i>Pelajari Analisis</a>
                     </div>
                 </div>
                 <div class="col-lg-5 text-center d-none d-lg-block" data-aos="zoom-in" data-aos-duration="1500">
@@ -556,7 +557,6 @@
         });
 
         // ----------------- CONFIGURASI LEAFLET WEBGIS -----------------
-        // Pusat Koordinat Kota Semarang
         const semarangCenter = [-6.9932, 110.4215];
         const map = L.map('map', {
             center: semarangCenter,
@@ -564,12 +564,10 @@
             zoomControl: true
         });
 
-        // Base Maps Layer (CartoDB Dark Matter)
         const darkBaseMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(map);
 
-        // Instansiasi Layer Group untuk Layer Control Kontrol
         const layerSmaNegeri = L.layerGroup();
         const layerSmaSwasta = L.layerGroup();
         const layerSmkNegeri = L.layerGroup();
@@ -578,12 +576,10 @@
         const layerBatasAdministrasi = L.layerGroup();
         const layerAreaTerjangkau = L.layerGroup();
 
-        // Mengaktifkan default layer utama di peta
         layerSmaNegeri.addTo(map);
         layerSmkNegeri.addTo(map);
         layerServiceArea.addTo(map);
 
-        // Simulasi Data Koordinat Titik Sekolah di Semarang
         const dataSekolah = [
             { name: "SMA Negeri 1 Semarang", type: "SMA", status: "Negeri", kecamatan: "Semarang Selatan", coords: [-6.9926, 110.4122] },
             { name: "SMA Negeri 3 Semarang", type: "SMA", status: "Negeri", kecamatan: "Semarang Tengah", coords: [-6.9842, 110.4218] },
@@ -595,7 +591,6 @@
             { name: "SMK Swasta Kristen Texas", type: "SMK", status: "Swasta", kecamatan: "Semarang Utara", coords: [-6.9715, 110.4190] }
         ];
 
-        // Loop untuk parsing data marker objek sekolah ke layer spasial spesifik
         dataSekolah.forEach(sekolah => {
             let markerColor = '#fff';
             let targetLayer;
@@ -614,7 +609,6 @@
                 fillOpacity: 0.85
             });
 
-            // Pembuatan Popup representatif berciri khas Glassmorphism modern
             const popupContent = `
                 <div style="padding: 5px;">
                     <h6 style="margin: 0 0 8px 0; font-weight: 700; color: #00f2fe;"><i class="fa-solid fa-graduation-cap me-2"></i>${sekolah.name}</h6>
@@ -628,19 +622,17 @@
             customMarker.bindPopup(popupContent);
             customMarker.addTo(targetLayer);
 
-            // Simulasi Service Area Polygon (Ischronous Buffer Berbasis Jaringan Jalan)
             const serviceAreaBuffer = L.circle(sekolah.coords, {
                 color: markerColor,
                 fillColor: markerColor,
                 fillOpacity: 0.04,
                 weight: 1,
                 dashArray: '4, 4',
-                radius: 2000 // Jangkauan batas asumsi psikologis zonasi makro 2 Kilometer
+                radius: 2000 
             });
             serviceAreaBuffer.addTo(layerServiceArea);
         });
 
-        // Simulasi Overlay Poligon Batas Administrasi Makro & Area Keterjangkauan Tinggi
         const mockSemarangPolygon = [
             [-6.95, 110.35], [-6.93, 110.43], [-6.96, 110.50],
             [-7.05, 110.49], [-7.08, 110.44], [-7.06, 110.34]
@@ -658,7 +650,6 @@
             weight: 0
         }).addTo(layerAreaTerjangkau);
 
-        // Pemasangan Layer Control Manajemen Peta
         const baseLayers = {
             "Dark Canvas Mode": darkBaseMap
         };
@@ -675,7 +666,6 @@
 
         L.control.layers(baseLayers, overlayLayers, { collapsed: false, position: 'topright' }).addTo(map);
 
-        // Pembuatan Kontrol Legenda Peta (Legend Control)
         const legend = L.control({ position: 'bottomleft' });
         legend.onAdd = function () {
             const div = L.DomUtil.create('div', 'map-legend');
@@ -691,10 +681,7 @@
         };
         legend.addTo(map);
 
-
         // ----------------- CONFIGURASI CHART / GRAFIK (CHART.JS) -----------------
-        
-        // Grafik 1: Distribusi Kuantitas Sekolah per Sampel Kecamatan
         const ctxKecamatan = document.getElementById('chartKecamatan').getContext('2d');
         new Chart(ctxKecamatan, {
             type: 'bar',
@@ -725,12 +712,11 @@
             }
         });
 
-        // Grafik 2: Persentase Keberhasilan Aksesibilitas Total Regional
         const ctxAksesibilitas = document.getElementById('chartAksesibilitas').getContext('2d');
         new Chart(ctxAksesibilitas, {
             type: 'doughnut',
             data: {
-                labels: ['Terjangkau Efektif', 'Kurang Terlayani (*Blank Spot*)'],
+                labels: ['Terjangkau Efektif', 'Blank Spot'],
                 datasets: [{
                     data: [74.2, 25.8],
                     backgroundColor: ['#10b981', '#ef4444'],
