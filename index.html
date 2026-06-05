@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGIS Aksesibilitas Pendidikan Kota Semarang</title>
+    <title>WebGIS Kriminalitas Kota Semarang</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,723 +14,262 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-    
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #081B4B 0%, #0F52BA 100%);
-            --glass-bg: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-blur: blur(12px);
-            --neon-glow: 0 0 20px rgba(15, 82, 186, 0.6);
-            --accent-color: #00f2fe;
+            --qgis-green: #589632;
+            --qgis-dark-green: #3a6622;
+            --qgis-light: #93b023;
+            --sidebar-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --bg-light: #f8f9fa;
         }
 
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
-            color: #ffffff;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow: hidden;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #081B4B;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #0F52BA;
-            border-radius: 4px;
+        /* Layout Container */
+        .wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
         }
 
-        /* Glassmorphism Utilities */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+        /* Sidebar Kiri - Gaya Institusional Modern */
+        .sidebar {
+            width: 380px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        /* Header Sidebar */
+        .sidebar-header {
             padding: 24px;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--qgis-dark-green) 0%, var(--qgis-green) 100%);
+            color: #ffffff;
+            border-bottom: 4px solid var(--qgis-light);
         }
-        .glass-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(0, 242, 254, 0.4);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Navbar */
-        .navbar {
-            background: rgba(8, 27, 75, 0.6) !important;
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-        .navbar-brand {
+        .sidebar-header h5 {
             font-weight: 700;
-            color: #fff !important;
+            margin: 0;
+            font-size: 1.25rem;
             letter-spacing: 0.5px;
         }
-        .navbar-brand span {
-            color: var(--accent-color);
-        }
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-weight: 500;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent-color) !important;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        .sidebar-header p {
+            margin: 5px 0 0 0;
+            font-size: 0.85rem;
+            opacity: 0.85;
         }
 
-        /* Hero Section */
-        #beranda {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            background: radial-gradient(circle at center, rgba(15, 82, 186, 0.3) 0%, transparent 70%);
-        }
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            background: linear-gradient(to right, #ffffff, var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.75);
-            font-weight: 300;
-        }
-        .btn-modern-primary {
-            background: linear-gradient(90deg, #10B981 0%, #059669 100%);
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 30px;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-modern-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
-            color: white;
-        }
-        .btn-modern-secondary {
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            color: #fff;
-            font-weight: 600;
-            padding: 10px 28px;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-modern-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #fff;
-            transform: scale(1.05);
-            color: #fff;
-        }
-        .floating-element {
-            animation: floating 4s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        /* Konten Isi Sidebar (Bisa di-scroll) */
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
-        /* Section Styling */
-        section {
-            padding: 100px 0;
+        .section-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
         }
+
         .section-title {
+            font-size: 0.95rem;
             font-weight: 700;
-            position: relative;
-            margin-bottom: 45px;
-            display: inline-block;
-        }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 4px;
-            background: var(--accent-color);
-            bottom: -10px;
-            left: 0;
-            border-radius: 2px;
-            box-shadow: 0 0 10px var(--accent-color);
+            color: var(--qgis-dark-green);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 6px;
         }
 
-        /* Stats & Dashboard */
-        .stat-icon {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-        .stat-number {
-            font-size: 2.2rem;
-            font-weight: 700;
-        }
-        .dashboard-metric {
-            border-left: 4px solid var(--accent-color);
-            padding-left: 15px;
+        /* Footer Sidebar */
+        .sidebar-footer {
+            padding: 15px 20px;
+            background: #edf2f7;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            color: #718096;
+            text-align: center;
         }
 
-        /* WebGIS Map Container */
-        #map-container {
+        /* Area Peta Kanan */
+        .map-container {
+            flex-grow: 1;
+            height: 100%;
             position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
         #map {
-            height: 650px;
             width: 100%;
+            height: 100%;
         }
+
+        /* Kustomisasi Tampilan Leaflet */
+        .leaflet-control-layers {
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 6px 10px !important;
+        }
+
+        /* Legenda Peta bergaya QGIS */
         .map-legend {
-            background: rgba(8, 27, 75, 0.85) !important;
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            padding: 15px;
-            color: #fff;
-            line-height: 1.6;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            line-height: 1.5;
+            font-size: 0.85rem;
+        }
+        .map-legend h6 {
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--qgis-dark-green);
         }
         .map-legend i {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             float: left;
             margin-right: 8px;
-            opacity: 0.8;
             border-radius: 3px;
         }
-        
-        /* Custom Leaflet Control & Popup Modification */
-        .leaflet-popup-content-wrapper {
-            background: rgba(8, 27, 75, 0.9) !important;
-            backdrop-filter: var(--glass-blur);
-            color: #fff !important;
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-        }
-        .leaflet-popup-tip {
-            background: rgba(8, 27, 75, 0.9) !important;
-        }
-        .leaflet-control-layers {
-            background: rgba(8, 27, 75, 0.85) !important;
-            backdrop-filter: var(--glass-blur);
-            color: #fff !important;
-            border: 1px solid var(--glass-border) !important;
-            border-radius: 10px !important;
-        }
 
-        /* Methodology Timeline */
-        .timeline-container {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin-top: 40px;
-        }
-        .timeline-container::before {
-            content: '';
-            position: absolute;
-            top: 30px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: rgba(255,255,255,0.1);
-            z-index: 1;
-        }
-        .timeline-step {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 16%;
-        }
-        .timeline-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #081B4B;
-            border: 3px solid var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px auto;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-            box-shadow: var(--neon-glow);
-            transition: all 0.3s ease;
-        }
-        .timeline-step:hover .timeline-icon {
-            background: var(--accent-color);
-            color: #081B4B;
-            transform: scale(1.1);
-        }
-
-        /* Charts Container */
-        .chart-wrapper {
-            position: relative;
-            height: 320px;
-            width: 100%;
-        }
-
-        /* Footer */
-        footer {
-            background: #040d25;
-            padding: 40px 0;
-            border-top: 1px solid var(--glass-border);
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Responsive Breakpoints fixes */
-        @media (max-width: 991px) {
-            .hero-title { font-size: 2.5rem; }
-            .timeline-container { flex-direction: column; }
-            .timeline-container::before { display: none; }
-            .timeline-step { width: 100%; margin-bottom: 30px; text-align: left; display: flex; align-items: center; }
-            .timeline-icon { margin: 0 20px 0 0; flex-shrink: 0; }
+        /* Responsive - Sembunyikan sidebar di layar HP kecil jika diperlukan */
+        @media (max-width: 768px) {
+            .wrapper { flex-direction: column; }
+            .sidebar { width: 100%; height: 40%; }
+            .map-container { height: 60%; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#beranda"><i class="fa-solid fa-graduation-cap me-2 text-info"></i>WebGIS <span>Pendidikan</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#peta">Peta Interaktif</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#metodologi">Metodologi</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#analisis">Analisis</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
-                </ul>
+    <div class="wrapper">
+        
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h5><i class="fa-solid fa-map-location-dot me-2"></i>WebGIS Kota Semarang</h5>
+                <p>Analisis Spasial Titik & Jalan Rawan Kriminalitas</p>
             </div>
-        </div>
-    </nav>
+            
+            <div class="sidebar-content">
+                
+                <div class="section-box">
+                    <div class="section-title">Deskripsi Sistem</div>
+                    <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: #4a5568;">
+                        Sistem Informasi Geografis ini menyajikan visualisasi data persebaran titik kriminalitas serta zonasi kerawanan ruas jalan di wilayah Kota Semarang menggunakan pemodelan spasial QGIS.
+                    </p>
+                </div>
 
-    <section id="beranda">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1200">
-                    <div class="text-warning small fw-bold mb-2 text-uppercase" style="letter-spacing: 1px;"><i class="fa-solid fa-layer-group me-2"></i>Analisis Spasial Pendidikan</div>
-                    <h1 class="hero-title mb-4">Analisis Keterjangkauan & Aksesibilitas Sarana Pendidikan</h1>
-                    <p class="hero-subtitle mb-4">Visualisasi spasial akses pendidikan tingkat SMA dan SMK di Kota Semarang berbasis pemodelan analisis jaringan (*network analysis*), batas komputasi *service area*, serta evaluasi ketersediaan fasilitas penunjang.</p>
-                    <div class="d-flex gap-3">
-                        <a href="#peta" class="btn btn-modern-primary"><i class="fa-solid fa-map me-2"></i>Lihat Peta</a>
-                        <a href="#dashboard" class="btn btn-modern-secondary"><i class="fa-solid fa-chart-simple me-2"></i>Pelajari Analisis</a>
-                    </div>
-                </div>
-                <div class="col-lg-5 text-center d-none d-lg-block" data-aos="zoom-in" data-aos-duration="1500">
-                    <img src="https://img.icons8.com/fluent/480/isometric-dynamic.png" class="img-fluid floating-element" alt="GIS Illustration" style="max-height: 400px;">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="container mt-n5 position-relative" style="z-index: 10;">
-        <div class="row g-4">
-            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="glass-card text-center">
-                    <i class="fa-solid fa-school stat-icon"></i>
-                    <div class="stat-number">16</div>
-                    <div class="text-white-50 small">Total SMA Negeri</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="glass-card text-center">
-                    <i class="fa-solid fa-building-columns stat-icon"></i>
-                    <div class="stat-number">64</div>
-                    <div class="text-white-50 small">Total SMA Swasta</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="glass-card text-center">
-                    <i class="fa-solid fa-gears stat-icon"></i>
-                    <div class="stat-number">12</div>
-                    <div class="text-white-50 small">Total SMK Negeri</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="400">
-                <div class="glass-card text-center">
-                    <i class="fa-solid fa-wrench stat-icon"></i>
-                    <div class="stat-number">48</div>
-                    <div class="text-white-50 small">Total SMK Swasta</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section id="peta">
-        <div class="container">
-            <div class="row">
-                <div class="col-12" data-aos="fade-up">
-                    <h2 class="section-title">Peta Spasial Interaktif</h2>
-                    <p class="text-white-50 mb-4">Gunakan panel kontrol layer untuk beralih antara sebaran sekolah, zona cakupan pelayanan jalan (*service area*), dan area buffer keterjangkauan.</p>
-                    <div id="map-container">
-                        <div id="map"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="dashboard">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-right">Dashboard Analisis Kewilayahan</h2>
-            <div class="row g-4 mt-2">
-                <div class="col-lg-6" data-aos="fade-up">
-                    <div class="glass-card h-100">
-                        <h4 class="mb-4 text-info"><i class="fa-solid fa-chart-pie me-2"></i>Metrik Ketercapaian Makro</h4>
-                        <div class="row g-4">
-                            <div class="col-sm-6">
-                                <div class="dashboard-metric mb-4">
-                                    <h3 class="fw-bold mb-1">74.2%</h3>
-                                    <p class="text-white-50 small mb-0">Persentase Wilayah Terjangkau (&lt; 2km)</p>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="dashboard-metric mb-4">
-                                    <h3 class="fw-bold mb-1">82.5K</h3>
-                                    <p class="text-white-50 small mb-0">Estimasi Penduduk Usia Sekolah Terlayani</p>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="dashboard-metric">
-                                    <h5 class="fw-bold text-success mb-1">Semarang Barat, Pedurungan</h5>
-                                    <p class="text-white-50 small mb-0">Kecamatan Aksesibilitas Tinggi</p>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="dashboard-metric">
-                                    <h5 class="fw-bold text-danger mb-1">Gunungpati, Mijen</h5>
-                                    <p class="text-white-50 small mb-0">Kecamatan Aksesibilitas Rendah</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="glass-card">
-                        <h4 class="mb-4 text-info"><i class="fa-solid fa-chart-column me-2"></i>Rasio Ketersediaan Sekolah</h4>
-                        <div class="chart-wrapper">
-                            <canvas id="chartKecamatan"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="metodologi">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-right">Metodologi Pemrosesan Spasial</h2>
-            <div class="timeline-container" data-aos="fade-up">
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-cloud-download"></i></div>
-                    <h5>Pengumpulan Data</h5>
-                    <p class="text-white-50 small">Akuisisi spasial titik Dapodik dan OD Jaringan Jalan OpenStreetMap Kota Semarang.</p>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-database"></i></div>
-                    <h5>Pengolahan Data</h5>
-                    <p class="text-white-50 small">Validasi geometri data tabular ke format spatial layer (Shapefile/GeoJSON) berbasis sistem koordinat WGS 84.</p>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-route"></i></div>
-                    <h5>Analisis Jaringan</h5>
-                    <p class="text-white-50 small">Membangun topologi lintasan jalan raya terintegrasi dengan hambatan dan batas kecepatan urban.</p>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-draw-polygon"></i></div>
-                    <h5>Service Area</h5>
-                    <p class="text-white-50 small">Penyusunan polygon poligon perimeter jangkauan tempuh riil berdasarkan ambang batas jarak (1km - 3km).</p>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-calculator"></i></div>
-                    <h5>Keterjangkauan</h5>
-                    <p class="text-white-50 small">Overlay spasial antara *service area* sekolah dengan distribusi density penduduk pemukiman.</p>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-icon"><i class="fa-solid fa-display"></i></div>
-                    <h5>Visualisasi</h5>
-                    <p class="text-white-50 small">Penyajian antarmuka WebGIS interaktif berbasis library open-source Leaflet engine.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="analisis">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-right">Hasil Analisis & Temuan Spesifik</h2>
-            <div class="row g-4 mt-2">
-                <div class="col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="glass-card h-100">
-                        <h5 class="text-info fw-bold mb-3"><i class="fa-solid fa-file-invoice me-2"></i>Ketersediaan Sarana Pendidikan</h5>
-                        <p class="text-white-50">Aglomerasi fasilitas pendidikan menengah atas terpusat secara signifikan di kawasan inti kota (Semarang Tengah, Semarang Selatan, dan Gajahmungkur). Sebaliknya, kapasitas tampung sekolah negeri di koridor sub-urban timur masih terbatas.</p>
-                    </div>
-                </div>
-                <div class="col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="glass-card h-100">
-                        <h5 class="text-info fw-bold mb-3"><i class="fa-solid fa-compass me-2"></i>Keterjangkauan Sarana Pendidikan</h5>
-                        <p class="text-white-50">Menggunakan model matematis jaringan jalan, jangkauan SMA/SMK Negeri sangat dibatasi oleh kondisi topografi struktural perbukitan di Semarang bagian selatan, memicu indeks friksi ruang yang tinggi bagi para calon peserta didik.</p>
-                    </div>
-                </div>
-                <div class="col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="glass-card h-100">
-                        <h5 class="text-info fw-bold mb-3"><i class="fa-solid fa-triangle-exclamation me-2"></i>Kecamatan Prioritas</h5>
-                        <p class="text-white-50">Kecamatan **Genuk** dan **Mijen** diidentifikasi sebagai wilayah prioritas utama (*blank spot*). Diperlukan intervensi regulasi kebijakan zonasi khusus atau alokasi pendirian unit sekolah baru (USB) untuk memitigasi disparitas spasial.</p>
-                    </div>
-                </div>
-                <div class="col-md-6" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="glass-card h-100">
-                        <h5 class="text-info fw-bold mb-3"><i class="fa-solid fa-lightbulb me-2"></i>Temuan Utama</h5>
-                        <div class="chart-wrapper" style="height: 180px;">
-                            <canvas id="chartAksesibilitas"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="tentang" class="position-relative">
-        <div class="container">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8" data-aos="fade-up">
-                    <h2 class="section-title">Tentang Sistem Pemetaan</h2>
-                    <p class="lead text-light mb-4">Sistem WebGIS ini dikembangkan sebagai instrumen pendukung keputusan (Spatial Decision Support System) yang valid, transparan, serta presisi guna mewujudkan pemerataan keadilan spasial hak pendidikan di Kota Semarang.</p>
-                    <div class="d-flex justify-content-center gap-4 text-white-50">
-                        <div><i class="fa-brands fa-github fa-2x mb-2 text-white"></i><p class="small">Open Source Code</p></div>
-                        <div><i class="fa-solid fa-map-location-dot fa-2x mb-2 text-white"></i><p class="small">Accurate Geospatial Data</p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="text-center">
-        <div class="container">
-            <p class="fw-bold text-white mb-2">Analisis Keterjangkauan dan Aksesibilitas Sarana Pendidikan SMA/SMK Kota Semarang</p>
-            <p class="mb-1 text-white-50">Program Studi Perencanaan Wilayah dan Kota (PWK)</p>
-            <p class="mb-3 text-white-50">Institut Teknologi Sepuluh Nopember</p>
-            <div class="text-muted small">&copy; 2026 WebGIS Core Engine. All Rights Reserved.</div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <script>
-        // Inisialisasi AOS Animation
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-
-        // ----------------- CONFIGURASI LEAFLET WEBGIS -----------------
-        const semarangCenter = [-6.9932, 110.4215];
-        const map = L.map('map', {
-            center: semarangCenter,
-            zoom: 12,
-            zoomControl: true
-        });
-
-        const darkBaseMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        }).addTo(map);
-
-        const layerSmaNegeri = L.layerGroup();
-        const layerSmaSwasta = L.layerGroup();
-        const layerSmkNegeri = L.layerGroup();
-        const layerSmkSwasta = L.layerGroup();
-        const layerServiceArea = L.layerGroup();
-        const layerBatasAdministrasi = L.layerGroup();
-        const layerAreaTerjangkau = L.layerGroup();
-
-        layerSmaNegeri.addTo(map);
-        layerSmkNegeri.addTo(map);
-        layerServiceArea.addTo(map);
-
-        const dataSekolah = [
-            { name: "SMA Negeri 1 Semarang", type: "SMA", status: "Negeri", kecamatan: "Semarang Selatan", coords: [-6.9926, 110.4122] },
-            { name: "SMA Negeri 3 Semarang", type: "SMA", status: "Negeri", kecamatan: "Semarang Tengah", coords: [-6.9842, 110.4218] },
-            { name: "SMA Negeri 5 Semarang", type: "SMA", status: "Negeri", kecamatan: "Semarang Tengah", coords: [-6.9810, 110.4130] },
-            { name: "SMA Swasta Sedes Sapientiae", type: "SMA", status: "Swasta", kecamatan: "Semarang Selatan", coords: [-6.9837, 110.4221] },
-            { name: "SMA Swasta Sultan Agung 1", type: "SMA", status: "Swasta", kecamatan: "Genuk", coords: [-6.9631, 110.4572] },
-            { name: "SMK Negeri 1 Semarang", type: "SMK", status: "Negeri", kecamatan: "Semarang Barat", coords: [-6.9885, 110.3950] },
-            { name: "SMK Negeri 4 Semarang", type: "SMK", status: "Negeri", kecamatan: "Semarang Selatan", coords: [-6.9961, 110.4225] },
-            { name: "SMK Swasta Kristen Texas", type: "SMK", status: "Swasta", kecamatan: "Semarang Utara", coords: [-6.9715, 110.4190] }
-        ];
-
-        dataSekolah.forEach(sekolah => {
-            let markerColor = '#fff';
-            let targetLayer;
-
-            if(sekolah.type === "SMA" && sekolah.status === "Negeri") { markerColor = '#00f2fe'; targetLayer = layerSmaNegeri; }
-            else if(sekolah.type === "SMA" && sekolah.status === "Swasta") { markerColor = '#3b82f6'; targetLayer = layerSmaSwasta; }
-            else if(sekolah.type === "SMK" && sekolah.status === "Negeri") { markerColor = '#10b981'; targetLayer = layerSmkNegeri; }
-            else if(sekolah.type === "SMK" && sekolah.status === "Swasta") { markerColor = '#f59e0b'; targetLayer = layerSmkSwasta; }
-
-            const customMarker = L.circleMarker(sekolah.coords, {
-                radius: 8,
-                fillColor: markerColor,
-                color: '#fff',
-                weight: 1.5,
-                opacity: 1,
-                fillOpacity: 0.85
-            });
-
-            const popupContent = `
-                <div style="padding: 5px;">
-                    <h6 style="margin: 0 0 8px 0; font-weight: 700; color: #00f2fe;"><i class="fa-solid fa-graduation-cap me-2"></i>${sekolah.name}</h6>
-                    <table class="table table-borderless table-sm text-white" style="margin: 0; font-size: 0.85rem;">
-                        <tr><td style="padding:2px 0;color:rgba(255,255,255,0.6)">Tipe</td><td style="padding:2px 0;font-weight:600;">: ${sekolah.type}</td></tr>
-                        <tr><td style="padding:2px 0;color:rgba(255,255,255,0.6)">Status</td><td style="padding:2px 0;font-weight:600;">: ${sekolah.status}</td></tr>
-                        <tr><td style="padding:2px 0;color:rgba(255,255,255,0.6)">Kecamatan</td><td style="padding:2px 0;font-weight:600;">: ${sekolah.kecamatan}</td></tr>
+                <div class="section-box">
+                    <div class="section-title">Ringkasan Data</div>
+                    <table class="table table-sm table-striped" style="font-size: 0.85rem; margin: 0;">
+                        <tr><td><i class="fa-solid fa-circle text-danger me-2"></i>Total Kasus</td><td class="fw-bold text-end">142</td></tr>
+                        <tr><td><i class="fa-solid fa-route text-warning me-2"></i>Jalan Rawan</td><td class="fw-bold text-end">24 Ruas</td></tr>
+                        <tr><td><i class="fa-solid fa-shield-halved text-success me-2"></i>Pos Polisi</td><td class="fw-bold text-end">18 Unit</td></tr>
                     </table>
                 </div>
-            `;
-            customMarker.bindPopup(popupContent);
-            customMarker.addTo(targetLayer);
 
-            const serviceAreaBuffer = L.circle(sekolah.coords, {
-                color: markerColor,
-                fillColor: markerColor,
-                fillOpacity: 0.04,
-                weight: 1,
-                dashArray: '4, 4',
-                radius: 2000 
-            });
-            serviceAreaBuffer.addTo(layerServiceArea);
+                <div class="section-box">
+                    <div class="section-title">Navigasi Layer</div>
+                    <p style="font-size: 0.8rem; line-height: 1.4; margin: 0; color: #718096;">
+                        Gunakan tombol kontrol layer di pojok kanan atas peta untuk mengaktifkan/menonaktifkan parameter data spasial hasil analisis.
+                    </p>
+                </div>
+
+            </div>
+            
+            <div class="sidebar-footer">
+                <div>Program Studi Perencanaan Wilayah & Kota</div>
+                <div class="fw-bold" style="color: var(--qgis-green);">Institut Teknologi Sepuluh Nopember</div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Inisialisasi Peta (Center di Semarang)
+        const map = L.map('map', {
+            center: [-6.9932, 110.4215],
+            zoom: 12,
+            zoomControl: false // dimatikan agar bisa dipindah kustomisasinya
         });
 
-        const mockSemarangPolygon = [
-            [-6.95, 110.35], [-6.93, 110.43], [-6.96, 110.50],
-            [-7.05, 110.49], [-7.08, 110.44], [-7.06, 110.34]
-        ];
-        L.polygon(mockSemarangPolygon, {
-            color: 'rgba(255,255,255,0.2)',
-            fillColor: 'transparent',
-            weight: 2
-        }).addTo(layerBatasAdministrasi);
+        // Pindahkan tombol zoom (+ -) ke pojok kiri bawah agar tidak tabrakan dengan sidebar
+        L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-        L.polygon([[-6.97, 110.39], [-6.96, 110.44], [-7.00, 110.43], [-7.01, 110.39]], {
-            color: '#00f2fe',
-            fillColor: '#00f2fe',
-            fillOpacity: 0.15,
-            weight: 0
-        }).addTo(layerAreaTerjangkau);
+        // 2. Base Map Pilihan (Menggunakan OSM Standard agar kontras dengan warna QGIS)
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-        const baseLayers = {
-            "Dark Canvas Mode": darkBaseMap
+        // Satelit Layer alternatif
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri'
+        });
+
+        // 3. Menyiapkan Grouping Layer Kosong (Tempat Data QGIS GeoJSON kamu nanti)
+        const layerTitikKriminalitas = L.layerGroup().addTo(map);
+        const layerJalanRawan = L.layerGroup().addTo(map);
+        const layerZonaBuffer = L.layerGroup();
+
+        // 4. Pengaturan Kontrol Pilihan Layer (Kanan Atas)
+        const baseMaps = {
+            "OpenStreetMap": osmLayer,
+            "Citra Satelit": satelliteLayer
         };
 
-        const overlayLayers = {
-            "<i class='fa-solid fa-map-lines text-muted me-1'></i> Batas Administrasi": layerBatasAdministrasi,
-            "<span style='color: #00f2fe;'>●</span> SMA Negeri": layerSmaNegeri,
-            "<span style='color: #3b82f6;'>●</span> SMA Swasta": layerSmaSwasta,
-            "<span style='color: #10b981;'>●</span> SMK Negeri": layerSmkNegeri,
-            "<span style='color: #f59e0b;'>●</span> SMK Swasta": layerSmkSwasta,
-            "<i class='fa-solid fa-chart-area text-info me-1'></i> Service Area (2 Km)": layerServiceArea,
-            "<i class='fa-solid fa-layer-group text-success me-1'></i> Area Terjangkau Optimal": layerAreaTerjangkau
+        const overlayMaps = {
+            "<span style='color: #e74c3c;'>●</span> Titik Kasus Kriminalitas": layerTitikKriminalitas,
+            "<span style='color: #f39c12;'>▬</span> Ruas Jalan Rawan": layerJalanRawan,
+            "<span style='color: #2ecc71;'>■</span> Zona Buffer Aman": layerZonaBuffer
         };
 
-        L.control.layers(baseLayers, overlayLayers, { collapsed: false, position: 'topright' }).addTo(map);
+        L.control.layers(baseMaps, overlayMaps, { collapsed: false, position: 'topright' }).addTo(map);
 
-        const legend = L.control({ position: 'bottomleft' });
+        // 5. Membuat Legenda Manual di Peta
+        const legend = L.control({ position: 'bottomright' });
         legend.onAdd = function () {
             const div = L.DomUtil.create('div', 'map-legend');
             div.innerHTML = `
-                <h6 class="fw-bold mb-2 small" style="letter-spacing:0.5px;"><i class="fa-solid fa-map me-1 text-info"></i> LEGENDA AKSESIBILITAS</h6>
-                <div><i style="background: #00f2fe"></i> SMA Negeri</div>
-                <div><i style="background: #3b82f6"></i> SMA Swasta</div>
-                <div><i style="background: #10b981"></i> SMK Negeri</div>
-                <div><i style="background: #f59e0b"></i> SMK Swasta</div>
-                <div><i style="border: 1px dashed rgba(255,255,255,0.6); background: rgba(255,255,255,0.1)"></i> Jangkauan Lintasan Jalan</div>
+                <h6>LEGENDA SPASIAL</h6>
+                <div><i style="background: #e74c3c"></i> Titik Kriminalitas</div>
+                <div><i style="background: #f39c12"></i> Ruas Jalan Rawan</div>
+                <div><i style="background: #2ecc71; opacity: 0.4;"></i> Buffer Keterjangkauan Pos</div>
             `;
             return div;
         };
         legend.addTo(map);
 
-        // ----------------- CONFIGURASI CHART / GRAFIK (CHART.JS) -----------------
-        const ctxKecamatan = document.getElementById('chartKecamatan').getContext('2d');
-        new Chart(ctxKecamatan, {
-            type: 'bar',
-            data: {
-                labels: ['Smg Tengah', 'Smg Selatan', 'Smg Barat', 'Pedurungan', 'Banyumanik', 'Genuk', 'Mijen'],
-                datasets: [{
-                    label: 'Negeri',
-                    data: [5, 4, 3, 4, 3, 1, 1],
-                    backgroundColor: '#00f2fe',
-                    borderRadius: 5
-                }, {
-                    label: 'Swasta',
-                    data: [15, 12, 10, 11, 8, 4, 3],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { labels: { color: '#fff', font: { family: 'Poppins' } } }
-                },
-                scales: {
-                    x: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { display: false } },
-                    y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                }
-            }
-        });
-
-        const ctxAksesibilitas = document.getElementById('chartAksesibilitas').getContext('2d');
-        new Chart(ctxAksesibilitas, {
-            type: 'doughnut',
-            data: {
-                labels: ['Terjangkau Efektif', 'Blank Spot'],
-                datasets: [{
-                    data: [74.2, 25.8],
-                    backgroundColor: ['#10b981', '#ef4444'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right', labels: { color: '#fff', font: { family: 'Poppins', size: 11 } } }
-                }
-            }
-        });
+        // SIMULASI MARKER AWAL (Bisa kamu hapus nanti kalau file data-sekolah.js kelompokmu sudah siap)
+        L.circleMarker([-6.9926, 110.4122], { radius: 7, fillColor: '#e74c3c', color: '#fff', weight: 1, fillOpacity: 0.9 }).addTo(layerTitikKriminalitas).bindPopup("<b>Lokasi A:</b> Kasus Pencurian");
+        L.circleMarker([-6.9842, 110.4218], { radius: 7, fillColor: '#e74c3c', color: '#fff', weight: 1, fillOpacity: 0.9 }).addTo(layerTitikKriminalitas).bindPopup("<b>Lokasi B:</b> Kasus Begal");
     </script>
 </body>
 </html>
